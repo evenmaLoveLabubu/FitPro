@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir -p src/assets/fonts src/assets/images src/components src/views src/data src/utils src/router)",
+      "Bash(cp -r \"../pixso/S1_Home/vue3/src/assets/fonts/\"* src/assets/fonts/)",
+      "Bash(cp \"../pixso/S1_Home/vue3/src/assets/images/\"*.png src/assets/images/)",
+      "Bash(cp \"../pixso/S2_Workout/vue3/src/assets/images/\"*.png src/assets/images/)",
+      "Bash(cp \"../pixso/S3_Plan/vue3/src/assets/images/\"*.png src/assets/images/)",
+      "Bash(cp \"../pixso/S4_Stats/vue3/src/assets/images/\"*.png src/assets/images/)",
+      "Bash(cp \"../pixso/S5_Profile/vue3/src/assets/images/\"*.png src/assets/images/)",
+      "Bash(npx vite:*)"
+    ]
+  }
+}
