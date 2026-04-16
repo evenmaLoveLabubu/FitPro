@@ -21,25 +21,27 @@ jobs:
       - name: Cache root node_modules
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: root-node-modules-${{ hashFiles('package-lock.json') }}
+          path: app/node_modules
+          key: root-node-modules-${{ hashFiles('app/package-lock.json') }}
           restore-keys: root-node-modules-
 
       - name: Cache server node_modules
         uses: actions/cache@v4
         with:
-          path: server/node_modules
-          key: server-node-modules-${{ hashFiles('server/package-lock.json') }}
+          path: app/server/node_modules
+          key: server-node-modules-${{ hashFiles('app/server/package-lock.json') }}
           restore-keys: server-node-modules-
 
       - name: Install root dependencies
+        working-directory: app
         run: npm ci
 
       - name: Install server dependencies
-        working-directory: server
+        working-directory: app/server
         run: npm ci
 
       - name: Build frontend
+        working-directory: app
         run: npm run build
 
   backend-test:
@@ -63,22 +65,23 @@ jobs:
       - name: Cache root node_modules
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: root-node-modules-${{ hashFiles('package-lock.json') }}
+          path: app/node_modules
+          key: root-node-modules-${{ hashFiles('app/package-lock.json') }}
           restore-keys: root-node-modules-
 
       - name: Cache server node_modules
         uses: actions/cache@v4
         with:
-          path: server/node_modules
-          key: server-node-modules-${{ hashFiles('server/package-lock.json') }}
+          path: app/server/node_modules
+          key: server-node-modules-${{ hashFiles('app/server/package-lock.json') }}
           restore-keys: server-node-modules-
 
       - name: Install root dependencies
+        working-directory: app
         run: npm ci
 
       - name: Install server dependencies
-        working-directory: server
+        working-directory: app/server
         run: npm ci
 
       - name: Wait for MongoDB
@@ -93,7 +96,7 @@ jobs:
           done
 
       - name: Run backend tests with coverage
-        working-directory: server
+        working-directory: app/server
         run: npm run test -- --coverage
 
   frontend-test:
@@ -111,14 +114,16 @@ jobs:
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: root-node-modules-${{ hashFiles('package-lock.json') }}
+          path: app/node_modules
+          key: root-node-modules-${{ hashFiles('app/package-lock.json') }}
           restore-keys: root-node-modules-
 
       - name: Install dependencies
+        working-directory: app
         run: npm ci
 
       - name: Run frontend tests with coverage
+        working-directory: app
         run: npm run test -- --coverage
 
   ci-check:
