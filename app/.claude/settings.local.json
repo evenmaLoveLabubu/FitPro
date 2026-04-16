@@ -32,7 +32,10 @@
       "Bash(node -e ':*)",
       "Bash(node:*)",
       "Bash(npm ls:*)",
-      "Bash(ipconfig)"
+      "Bash(ipconfig)",
+      "Bash(dir /b \"D:\\\\mzq\\\\program\\\\Study\\\\sports\\\\app\\\\server\")",
+      "Bash(npx vitest *)",
+      "Bash(DEBUG=mongodb-memory-server* npx vitest run --reporter=verbose)"
     ]
   }
 }

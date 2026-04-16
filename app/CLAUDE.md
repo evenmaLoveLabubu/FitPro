@@ -11,10 +11,16 @@ FitPro — a Chinese-language mobile fitness training app. Vue 3 + Vite frontend
 **Frontend (from project root):**
 - `npm run dev` — start Vite dev server (port 5173)
 - `npm run build` — production build to `dist/`
+- `npm run test` — run frontend unit & component tests (Vitest)
+- `npm run test:watch` — run tests in watch mode
+- `npm run test:coverage` — run tests with coverage report
 
 **Backend (from `server/` directory):**
 - `npm run dev` — start server with `node --watch` (port 3001)
 - `npm run seed` — seed MongoDB with plans, week plans, and exercise library
+- `npm run test` — run backend unit & integration tests (Vitest + Supertest + in-memory MongoDB)
+- `npm run test:watch` — run tests in watch mode
+- `npm run test:coverage` — run tests with coverage report
 
 Both must run simultaneously for development. Vite proxies `/api` requests to `http://localhost:3001`.
 
@@ -66,3 +72,54 @@ Custom exercises are passed from PlanEdit to Workout via `router.push` with `his
 - `goal` field enum: `'增肌'` (muscle), `'减脂'` (fat loss), `'家庭训练'` (home)
 - WeekPlan `dayOrder`: 0=Monday through 6=Sunday
 - WorkoutPlan `id` field is a custom string (e.g., `'plan_001'`), not MongoDB `_id`
+
+## Testing
+
+### Testing Stack
+
+- **Frontend:** Vitest + @vue/test-utils + jsdom
+- **Backend:** Vitest + Supertest + MongoDB (本地 `mongodb://localhost:27017/fitpro_test`)
+- **Coverage:** @vitest/coverage-v8
+
+**注意:** 后端集成测试需要本地 MongoDB 服务运行。CI 环境使用 GitHub Actions MongoDB service container。
+
+### Test Directory Structure
+
+```
+src/tests/
+  unit/          # 前端单元测试 (api, storage)
+  components/    # 前端组件测试 (Timer, ExerciseCard, TabBar)
+server/tests/
+  unit/          # 后端单元测试 (streak, 纯函数)
+  integration/   # 后端集成测试 (auth, users, records, exercises, plans)
+```
+
+### TDD Workflow (测试驱动开发)
+
+新增功能或修复 bug 时，**必须先写测试**：
+
+1. **Red** — 写一个失败的测试，描述期望行为
+2. **Green** — 编写最少代码使测试通过
+3. **Refactor** — 重构代码，确保测试仍然通过
+
+### Test Writing Guidelines
+
+- **后端集成测试**: 使用 `tests/helper.js` 的 `connectDB/disconnectDB/clearDB` 管理数据库生命周期，每个测试文件独立启停 MongoMemoryServer
+- **后端纯函数**: 直接导入测试，不需要数据库
+- **前端组件**: 使用 `@vue/test-utils` 的 `mount`，mock `localStorage` 和 `fetch`
+- **前端工具函数**: mock 依赖模块，测试正常路径和异常降级
+
+### CI Acceptance Criteria (CI 验收标准)
+
+**所有 CI 检查通过是合并 PR 的前提条件。** GitHub Actions CI workflow (`.github/workflows/ci.yml`) 包含：
+
+1. **Build** — 前端构建必须成功
+2. **Backend Tests** — 后端所有测试必须通过
+3. **Frontend Tests** — 前端所有测试必须通过
+4. **CI Gate** — 以上全部成功才算 CI 通过
+
+**规则：**
+- 任何 PR 必须等 CI 全绿才能合并
+- 新增功能必须附带测试
+- 修复 bug 必须附带回归测试
+- 不允许跳过或注释掉失败的测试
