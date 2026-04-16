@@ -37,6 +37,13 @@ async function request(method, path, body = null) {
 
   let res = await fetch(`${BASE_URL}${path}`, options)
 
+  // 502/503/504 等服务端不可用 → 直接跳登录页
+  if (res.status === 502 || res.status === 503 || res.status === 504) {
+    clearTokens()
+    window.location.href = '/login'
+    throw new Error('服务暂不可用，请稍后重试')
+  }
+
   // Token 过期，尝试刷新
   if (res.status === 401 && path !== '/auth/login' && path !== '/auth/register') {
     const refreshed = await tryRefresh()
@@ -44,6 +51,13 @@ async function request(method, path, body = null) {
       headers['Authorization'] = `Bearer ${getToken()}`
       options.headers = headers
       res = await fetch(`${BASE_URL}${path}`, options)
+
+      // 刷新后仍然 401 → token 彻底失效
+      if (res.status === 401) {
+        clearTokens()
+        window.location.href = '/login'
+        throw new Error('登录已过期，请重新登录')
+      }
     } else {
       clearTokens()
       window.location.href = '/login'
