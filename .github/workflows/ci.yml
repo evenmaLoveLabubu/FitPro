@@ -18,21 +18,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache root node_modules
-        uses: actions/cache@v4
-        with:
-          path: app/node_modules
-          key: root-node-modules-${{ hashFiles('app/package-lock.json') }}
-          restore-keys: root-node-modules-
-
-      - name: Cache server node_modules
-        uses: actions/cache@v4
-        with:
-          path: app/server/node_modules
-          key: server-node-modules-${{ hashFiles('app/server/package-lock.json') }}
-          restore-keys: server-node-modules-
-
-      - name: Install root dependencies
+      - name: Install app dependencies
         working-directory: app
         run: npm ci
 
@@ -43,6 +29,10 @@ jobs:
       - name: Build frontend
         working-directory: app
         run: npm run build
+
+      - name: Verify node_modules
+        working-directory: app
+        run: ls node_modules/.bin/vite
 
   backend-test:
     name: Backend Tests
@@ -62,21 +52,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache root node_modules
-        uses: actions/cache@v4
-        with:
-          path: app/node_modules
-          key: root-node-modules-${{ hashFiles('app/package-lock.json') }}
-          restore-keys: root-node-modules-
-
-      - name: Cache server node_modules
-        uses: actions/cache@v4
-        with:
-          path: app/server/node_modules
-          key: server-node-modules-${{ hashFiles('app/server/package-lock.json') }}
-          restore-keys: server-node-modules-
-
-      - name: Install root dependencies
+      - name: Install app dependencies
         working-directory: app
         run: npm ci
 
@@ -111,14 +87,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: app/node_modules
-          key: root-node-modules-${{ hashFiles('app/package-lock.json') }}
-          restore-keys: root-node-modules-
-
-      - name: Install dependencies
+      - name: Install app dependencies
         working-directory: app
         run: npm ci
 
